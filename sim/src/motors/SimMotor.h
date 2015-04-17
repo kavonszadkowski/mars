@@ -30,6 +30,7 @@
 #include <mars/data_broker/ProducerInterface.h>
 #include <mars/data_broker/ReceiverInterface.h>
 #include <mars/data_broker/DataPackage.h>
+#include <mars/interfaces/MotorInterface.h>
 #include <mars/interfaces/MotorData.h>
 
 #include <iostream>
@@ -53,32 +54,30 @@ namespace mars {
      *  - "current" (double)
      *  - "torque" (double)
      */
-    class SimMotor : public data_broker::ProducerInterface ,
-                     public data_broker::ReceiverInterface {
+    class SimMotor : public interfaces::MotorInterface,
+                     public interfaces::MotorControllerInterface{
 
     public:
-      SimMotor(interfaces::ControlCenter *control,
-               const interfaces::MotorData &sMotor);
+      SimMotor(interfaces::ControlCenter *control, const ConfigMap config);
       ~SimMotor(void);
-  
+
+      // public methods
+
       /**
-       * attach the joint that will be the motors axis
-       *
-       * @param joint to be the axis
-       */
-		 
-      void attachJoint(SimJoint *joint);
-      void attachPlayJoint(SimJoint *joint);
+      * refreshAngle updates the motor angles
+      */
+      void refreshAngle();
+      void update(interfaces::sReal time_ms);
+      void deactivate(void);
+
+      // getters and setters
 		
       /**
        * get actual joint angle
        * 
        * @return actual joint angle
        */
-      interfaces::sReal getActualAngle() const;
-		
-
-		
+      interfaces::sReal getCurrentPosition() const;
       int getAxis() const;
 		
       /**
@@ -86,7 +85,7 @@ namespace mars {
        *
        * @return desired motor angle
        */
-      interfaces::sReal getDesiredMotorAngle() const;
+      interfaces::sReal getDesiredMotorPosition() const;
 		
       /**
        * return motor joint
@@ -226,11 +225,6 @@ namespace mars {
       interfaces::sReal getD() const;
 		
       /**
-       * refreshAngle updates the motor angles
-       */
-      void refreshAngle();
-		
-      /**
        * sets the maximum velocity allowed for the motor
        *
        * @param value maximum velocity of the motor
@@ -266,7 +260,6 @@ namespace mars {
 
       //  void setSMotor(const MotorData &sMotor);
       const interfaces::MotorData getSMotor(void) const;
-      void update(interfaces::sReal time_ms);
       unsigned long getIndex(void) const;
       unsigned long getJointIndex(void) const;
       void getCoreExchange(interfaces::core_objects_exchange* obj) const;
@@ -279,31 +272,29 @@ namespace mars {
       interfaces::sReal getActualPosition(void) const;
       interfaces::sReal getCurrent(void) const;
       interfaces::sReal getTorque(void) const;
-      void deactivate(void);
 
       void setSMotor(const interfaces::MotorData &sMotor);
+
+      // methods inherited from data broker interfaces
       void getDataBrokerNames(std::string *groupName, std::string *dataName) const;
-  
+
       virtual void produceData(const data_broker::DataInfo &info,
-                               data_broker::DataPackage *package,
-                               int callbackParam);
+              data_broker::DataPackage *package,  int callbackParam);
+
       virtual void receiveData(const data_broker::DataInfo &info,
-                               const data_broker::DataPackage &package,
-                               int callbackParam);
+              const data_broker::DataPackage &package, int callbackParam);
 
     private:
-      interfaces::ControlCenter *control;
-      interfaces::MotorData sMotor;
-      interfaces::sReal motorForce, maxEffort, actualAngle1, actualAngle2;
+
       interfaces::sReal p, i, d;
-      int axis, type;
-      interfaces::sReal time;
-      interfaces::sReal actual_velocity, actual_position, desired_position, desired_velocity;
       interfaces::sReal last_error;
       interfaces::sReal integ_error;
       interfaces::sReal pwm;
-      interfaces::sReal current, torque, i_current, last_current, last_velocity, joint_velocity;
-      SimJoint* myJoint, *myPlayJoint;
+      interfaces::sReal time;
+
+      // for current fit function
+      // currently only done for SpaceClimber motor
+      interfaces::sReal kXY, kX, kY, k;
 
     };
 
