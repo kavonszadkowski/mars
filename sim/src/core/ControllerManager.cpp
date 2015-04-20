@@ -321,7 +321,7 @@ namespace mars {
     unsigned long ControllerManager::addController(const ControllerData &controller) {
       if (do_not_load_controller)
         return 0;
-      std::vector<SimMotor*> vmotor;
+      std::vector<BaseMotor*> vmotor;
       std::vector<BaseSensor*> vsensor;
       std::vector<NodeData*> nodes;
       std::vector<unsigned long>::const_iterator nter;
@@ -330,7 +330,7 @@ namespace mars {
 
       for (nter = controller.motors.begin(); nter != controller.motors.end();
            nter++) {
-        SimMotor* retval = control->motors->getSimMotor(*nter);
+        BaseMotor* retval = control->motors->getSimMotor(*nter);
         if (retval)
           vmotor.push_back(retval);
       }

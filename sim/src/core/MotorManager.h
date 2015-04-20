@@ -45,7 +45,7 @@
 namespace mars {
   namespace sim {
 
-    class SimMotor;
+    class BaseMotor;
 
     /**
      * \brief "MotorManager" imlements the interfaces for all motor 
@@ -142,7 +142,7 @@ namespace mars {
        *
        * \returns Returns a pointer to the corresponding motor object.
        */
-      virtual SimMotor* getSimMotor(unsigned long id) const;
+      virtual BaseMotor* getSimMotor(unsigned long id) const;
 
       /**
        * \brief This function returns the SimMotor object for a given name.
@@ -156,7 +156,7 @@ namespace mars {
        *
        * \returns Returns a pointer to the corresponding motor object.
        */
-      virtual SimMotor* getSimMotorByName(const std::string &name) const;
+      virtual BaseMotor* getSimMotorByName(const std::string &name) const;
 
       /**
        * \brief Sets the value of the motor with the given id to the given value.
@@ -318,7 +318,7 @@ namespace mars {
       unsigned long next_motor_id;
 
       //! a container for all motors currently present in the simulation
-      std::map<unsigned long, SimMotor*> simMotors;
+      std::map<unsigned long, BaseMotor*> simMotors;
 
       //! a containter for all motors that are reloaded after a reset of the simulation
       std::list<interfaces::MotorData> simMotorsReload;

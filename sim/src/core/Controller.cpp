@@ -56,11 +56,11 @@ namespace mars {
 
     
     Controller::Controller(sReal rate,
-                           const std::vector<SimMotor*> &motors,
+                           const std::vector<BaseMotor*> &motors,
                            const std::vector<BaseSensor*> &sensors,
                            const std::vector<NodeData*> &sNodes,
                            ControlCenter* control, int nport) {
-      std::vector<SimMotor*>::const_iterator iter;
+      std::vector<BaseMotor*>::const_iterator iter;
       std::vector<BaseSensor*>::const_iterator jter;
       std::vector<NodeData*>::const_iterator lter;
 
@@ -153,7 +153,7 @@ namespace mars {
 
     void Controller::update(sReal time_ms) {
       std::vector<BaseSensor*>::iterator iter;
-      std::vector<SimMotor*>::iterator jter;
+      std::vector<BaseMotor*>::iterator jter;
       char data[PACKAGE_SIZE];
       char *p = data;
       double value;

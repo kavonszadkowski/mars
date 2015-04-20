@@ -33,7 +33,7 @@ namespace mars {
     using namespace utils;
     using namespace interfaces;
 
-    SimMotor::SimMotor(ControlCenter *c, const MotorData &sMotor_)
+    BaseMotor::BaseMotor(ControlCenter *c, const MotorData &sMotor_)
       : control(c) {
 
       //  setSMotor(sMotor_);
@@ -103,7 +103,7 @@ namespace mars {
       }
     }
 
-    SimMotor::~SimMotor(void) {
+    BaseMotor::~BaseMotor(void) {
       std::string groupName, dataName;
       getDataBrokerNames(&groupName, &dataName);
       if(control->dataBroker) {
@@ -115,7 +115,7 @@ namespace mars {
       if(myJoint) myJoint->unsetJointAsMotor(sMotor.axis);
     }
 
-    void SimMotor::produceData(const data_broker::DataInfo &info,
+    void BaseMotor::produceData(const data_broker::DataInfo &info,
                                data_broker::DataPackage *dbPackage,
                                int callbackParam) {
       dbPackage->set(dbIdIndex, (long)sMotor.index);
@@ -125,7 +125,7 @@ namespace mars {
       dbPackage->set(dbTorqueIndex, getTorque());
     }
 
-    void SimMotor::receiveData(const data_broker::DataInfo& info,
+    void BaseMotor::receiveData(const data_broker::DataInfo& info,
                                const data_broker::DataPackage& package,
                                int id) {
       sReal value;
@@ -133,53 +133,53 @@ namespace mars {
       setValue(value);
     }
 
-    void SimMotor::attachJoint(SimJoint *joint){
+    void BaseMotor::attachJoint(SimJoint *joint){
       myJoint = joint;
     }
 
-    void SimMotor::attachPlayJoint(SimJoint *joint){
+    void BaseMotor::attachPlayJoint(SimJoint *joint){
       myPlayJoint = joint;
     }
 
-    SimJoint* SimMotor::getJoint() const {
+    SimJoint* BaseMotor::getJoint() const {
       return myJoint;
     }
 
-    SimJoint* SimMotor::getPlayJoint() const {
+    SimJoint* BaseMotor::getPlayJoint() const {
       return myPlayJoint;
     }
 
-    void SimMotor::setAxis(int tempAxis){
+    void BaseMotor::setAxis(int tempAxis){
       axis = tempAxis;
     }
 
-    int SimMotor::getAxis() const {
+    int BaseMotor::getAxis() const {
       return axis;
     }
 
-    const std::string SimMotor::getName() const {
+    const std::string BaseMotor::getName() const {
       return sMotor.name;
     }
 
-    void SimMotor::setName(const std::string &newname) {
+    void BaseMotor::setName(const std::string &newname) {
       sMotor.name = newname;
     }
 
 
-    void SimMotor::setDesiredMotorAngle(sReal angle) {
+    void BaseMotor::setDesiredMotorAngle(sReal angle) {
       desired_position = angle;
       sMotor.value = angle;
     }
 
-    void SimMotor::setDesiredMotorVelocity(sReal vel) {
+    void BaseMotor::setDesiredMotorVelocity(sReal vel) {
       desired_velocity = vel;
     }
 
-    sReal SimMotor::getDesiredMotorAngle() const {
+    sReal BaseMotor::getDesiredMotorAngle() const {
       return desired_position;
     }
 
-    void SimMotor::setMaxEffort(sReal force) {
+    void BaseMotor::setMaxEffort(sReal force) {
       sMotor.maxEffort = force;
       if(sMotor.axis == 1) {
         myJoint->setForceLimit(sMotor.maxEffort);
@@ -189,93 +189,93 @@ namespace mars {
       }
     }
 
-    void SimMotor::setMotorMaxForce(sReal force) { // deprecated
+    void BaseMotor::setMotorMaxForce(sReal force) { // deprecated
       setMaxEffort(force);
     }
 
-    sReal SimMotor::getMaxEffort() const {
+    sReal BaseMotor::getMaxEffort() const {
       return maxEffort;
     }
 
-    sReal SimMotor::getMotorMaxForce() const {
+    sReal BaseMotor::getMotorMaxForce() const {
       return maxEffort;
     }
 
-    sReal SimMotor::getActualAngle() const {
+    sReal BaseMotor::getActualAngle() const {
       return actualAngle1;
     }
 
-    void SimMotor::setActualAngle(sReal angle) {
+    void BaseMotor::setActualAngle(sReal angle) {
       actualAngle1 = angle;
     }
 
-    void SimMotor::setMaxSpeed(sReal value) {
+    void BaseMotor::setMaxSpeed(sReal value) {
       sMotor.maxSpeed = fabs(value);
     }
 
-    void SimMotor::setMaximumVelocity(sReal value) {
+    void BaseMotor::setMaximumVelocity(sReal value) {
       setMaxSpeed(value);
     }
 
-    sReal SimMotor::getMaxSpeed() const {
+    sReal BaseMotor::getMaxSpeed() const {
       return sMotor.maxSpeed;
     }
 
-    sReal SimMotor::getMaximumVelocity() const {
+    sReal BaseMotor::getMaximumVelocity() const {
       return sMotor.maxSpeed;
     }
 
 
-    bool SimMotor::isServo() const {
+    bool BaseMotor::isServo() const {
       // TODO: the 2 should be replaced by the correct enum
       return (type == 2);
     }
 
     // TODO: where is this->type ever used? shouldn't it be sMotor.type?
     //       should use the enum MotorType defined in MARSDefs.h
-    void SimMotor::setType(int Type){
+    void BaseMotor::setType(int Type){
       type = Type;
     }
 
-    void SimMotor::setVelocity(sReal v) {
+    void BaseMotor::setVelocity(sReal v) {
       actual_velocity = v;
     }
 
-    sReal SimMotor::getVelocity() const {
+    sReal BaseMotor::getVelocity() const {
       return actual_velocity;
     }
 
-    void SimMotor::setP(sReal p) {
+    void BaseMotor::setP(sReal p) {
       sMotor.p = p;
     }
 
-    void SimMotor::setI(sReal i) {
+    void BaseMotor::setI(sReal i) {
       sMotor.i = i;
     }
 
-    void SimMotor::setD(sReal d) {
+    void BaseMotor::setD(sReal d) {
       sMotor.d = d;
     }
 
-    sReal SimMotor::getP() const {
+    sReal BaseMotor::getP() const {
       return p;
     }
 
-    sReal SimMotor::getI() const {
+    sReal BaseMotor::getI() const {
       return i;
     }
 
-    sReal SimMotor::getD() const {
+    sReal BaseMotor::getD() const {
       return d;
     }
 
-    void SimMotor::refreshAngle(){
+    void BaseMotor::refreshAngle(){
       actualAngle1 = myJoint->getActualAngle1();
       actualAngle2 = myJoint->getActualAngle2();
     }
 
 
-    void SimMotor::setSMotor(const MotorData &sMotor) {
+    void BaseMotor::setSMotor(const MotorData &sMotor) {
       this->sMotor = sMotor;
       if(sMotor.type == MOTOR_TYPE_PID ||
          sMotor.type == MOTOR_TYPE_PID_FORCE) {
@@ -307,11 +307,11 @@ namespace mars {
     }
 
 
-    const MotorData SimMotor::getSMotor(void) const {
+    const MotorData BaseMotor::getSMotor(void) const {
       return sMotor;
     }
 
-    void SimMotor::update(sReal time_ms) {
+    void BaseMotor::update(sReal time_ms) {
       // updates the motor
       // a timing should be added
       sReal er = 0;
@@ -439,7 +439,7 @@ namespace mars {
       }
     }
 
-    void SimMotor::setValue(sReal value) {
+    void BaseMotor::setValue(sReal value) {
       switch (sMotor.type) {
       case MOTOR_TYPE_PID:
         sMotor.value = desired_position = value;
@@ -458,7 +458,7 @@ namespace mars {
       }
     }
 
-    sReal SimMotor::getValue(void) const {
+    sReal BaseMotor::getValue(void) const {
       switch (sMotor.type) {
       case MOTOR_TYPE_PID:
         return desired_position;
@@ -475,7 +475,7 @@ namespace mars {
       return 0.0;
     }
 
-    void SimMotor::setPID(sReal mP, sReal mI, sReal mD) {
+    void BaseMotor::setPID(sReal mP, sReal mI, sReal mD) {
       switch (sMotor.type) {
       case MOTOR_TYPE_PID_FORCE:
         sMotor.p = mP;
@@ -496,15 +496,15 @@ namespace mars {
     }
 
 
-    unsigned long SimMotor::getIndex(void) const {
+    unsigned long BaseMotor::getIndex(void) const {
       return sMotor.index;
     }
 
-    unsigned long SimMotor::getJointIndex(void) const {
+    unsigned long BaseMotor::getJointIndex(void) const {
       return sMotor.jointIndex;
     }
 
-    void SimMotor::getCoreExchange(core_objects_exchange* obj) const {
+    void BaseMotor::getCoreExchange(core_objects_exchange* obj) const {
       obj->index = sMotor.index;
       obj->name = sMotor.name;
       obj->groupID = sMotor.type;
@@ -525,23 +525,23 @@ namespace mars {
       //obj->rot = &rot;
     }
 
-    sReal SimMotor::getActualPosition(void) const {
+    sReal BaseMotor::getActualPosition(void) const {
       return actual_position;
     }
 
-    sReal SimMotor::getCurrent(void) const {
+    sReal BaseMotor::getCurrent(void) const {
       return current;
     }
 
-    sReal SimMotor::getTorque(void) const {
+    sReal BaseMotor::getTorque(void) const {
       return torque;
     }
 
-    void SimMotor::deactivate(void) {
+    void BaseMotor::deactivate(void) {
       activated = false;
     }
 
-    void SimMotor::getDataBrokerNames(std::string *groupName,
+    void BaseMotor::getDataBrokerNames(std::string *groupName,
                                       std::string *dataName) const {
       char format[] = "Motors/%05lu_%s";
       int size = snprintf(0, 0, format, sMotor.index, sMotor.name.c_str());

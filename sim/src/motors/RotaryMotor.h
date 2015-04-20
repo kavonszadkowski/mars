@@ -38,12 +38,12 @@ namespace mars {
          *  - "current" (double)
          *  - "torque" (double)
          */
-        class RotaryMotor : public SimMotor {
+        class RotaryMotor : public BaseMotor {
 
         public:
-            SimMotor(interfaces::ControlCenter *control,
+            BaseMotor(interfaces::ControlCenter *control,
             ConfigMap config);
-            ~SimMotor(void);
+            ~BaseMotor(void);
 
             // motor methods
             void deactivate(void);

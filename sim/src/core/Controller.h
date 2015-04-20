@@ -67,7 +67,7 @@ namespace mars {
     class Controller : public utils::Thread {
     public:
       Controller(interfaces::sReal rate,
-                 const std::vector<SimMotor*> &motors,
+                 const std::vector<BaseMotor*> &motors,
                  const std::vector<interfaces::BaseSensor*> &sensors,
                  const std::vector<interfaces::NodeData*> &sNodes,
                  interfaces::ControlCenter *control, int portn=1500);
@@ -117,7 +117,7 @@ namespace mars {
       std::string hostname;
       interfaces::ControlCenter *control;
       bool running;
-      std::vector<SimMotor*> motors;
+      std::vector<BaseMotor*> motors;
       std::vector<interfaces::BaseSensor*> sensors;
       std::vector<interfaces::NodeData*> sNodes;
       int initServer(int port);

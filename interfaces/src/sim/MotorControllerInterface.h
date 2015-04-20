@@ -18,10 +18,24 @@ namespace mars {
             }
             virtual ~MotorControllerInterface() {}
 
+  		  void setP(interfaces::sReal p);
+  		  void setI(interfaces::sReal i);
+  		  void setD(interfaces::sReal d);
+		  interfaces::sReal getP() const;
+		  interfaces::sReal getI() const;
+		  interfaces::sReal getD() const;
+  		  void setPID(interfaces::sReal mP, interfaces::sReal mI, interfaces::sReal mD);
+
         protected:
             std::string type; // type of the motorcontroller
 
             ControlCenter *control;
+
+            interfaces::sReal p, i, d;
+            interfaces::sReal last_error;
+            interfaces::sReal integ_error;
+            interfaces::sReal pwm;
+            interfaces::sReal time;
 
             // for current fit function
             // currently only done for SpaceClimber motor

@@ -41,7 +41,7 @@
 namespace mars {
 
   namespace sim {
-    class SimMotor;
+    class BaseMotor;
   }
   
   namespace interfaces {
@@ -150,7 +150,7 @@ namespace mars {
        *
        * \returns Returns a pointer to the corresponding motor object.
        */
-      virtual sim::SimMotor* getSimMotor(unsigned long index) const = 0;
+      virtual sim::BaseMotor* getSimMotor(unsigned long index) const = 0;
 
       /**
        * \brief This function returns the SimMotor object for a given name.
@@ -164,7 +164,7 @@ namespace mars {
        *
        * \returns Returns a pointer to the corresponding motor object.
        */
-      virtual sim::SimMotor* getSimMotorByName(const std::string &name) const = 0;
+      virtual sim::BaseMotor* getSimMotorByName(const std::string &name) const = 0;
 
       /**
        * \brief Sets the value of the motor with the given id to the given value.

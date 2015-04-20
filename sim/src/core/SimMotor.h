@@ -53,13 +53,13 @@ namespace mars {
      *  - "current" (double)
      *  - "torque" (double)
      */
-    class SimMotor : public data_broker::ProducerInterface ,
+    class BaseMotor : public data_broker::ProducerInterface ,
                      public data_broker::ReceiverInterface {
 
     public:
-      SimMotor(interfaces::ControlCenter *control,
+      BaseMotor(interfaces::ControlCenter *control,
                const interfaces::MotorData &sMotor);
-      ~SimMotor(void);
+      ~BaseMotor(void);
   
       /**
        * attach the joint that will be the motors axis

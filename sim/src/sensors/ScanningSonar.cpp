@@ -195,7 +195,7 @@ namespace mars {
     int ScanningSonar::getSensorData(double ** data) const {
       if(!gw) return 0;
 
-      SimMotor *motor = control->motors->getSimMotor(motorID);
+      BaseMotor *motor = control->motors->getSimMotor(motorID);
       //Quaternion q = motor->getJoint()->getAttachedNode2()->getRotation().inverse() * motor->getJoint()->getAttachedNode1()->getRotation();
       Quaternion q = motor->getJoint()->getAttachedNode1()->getRotation().inverse() * motor->getJoint()->getAttachedNode2()->getRotation();
 
@@ -268,7 +268,7 @@ namespace mars {
         gc->updateViewportQuat(head_position.x(), head_position.y(), head_position.z(),head_orientation.x(), head_orientation.y(), head_orientation.z(), head_orientation.w());
       }
   
-      SimMotor *motor = control->motors->getSimMotor(motorID);
+      BaseMotor *motor = control->motors->getSimMotor(motorID);
       if(motor && config.ping_pong_mode)
         {
           Quaternion q = motor->getJoint()->getAttachedNode1()->getRotation().inverse() * motor->getJoint()->getAttachedNode2()->getRotation();
