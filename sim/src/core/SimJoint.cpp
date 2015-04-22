@@ -127,11 +127,20 @@ namespace mars {
       axis1InNode1 = inverseQNode1*sJoint.axis1;
     }
 
-    SimNode* SimJoint::getAttachedNode1() const {
+    SimNode* getAttachedNode(unsigned char axis_index=0) const {
+      if (axis_index == 0) {
+        return snode1;
+      }
+      else {
+        return snode2;
+      }
+    }
+
+    SimNode* SimJoint::getAttachedNode1() const { // deprecated
       return snode1;
     }
 
-    SimNode* SimJoint::getAttachedNode2() const {
+    SimNode* SimJoint::getAttachedNode2() const { // deprecated
       return snode2;
     }
 
@@ -156,13 +165,6 @@ namespace mars {
       return anchor;
     }
 
-    void SimJoint::setAxis1(const Vector &axis) {
-      sJoint.axis1 = axis1 = axis;
-      axis1InNode1 = snode1->getRotation().inverse()*sJoint.axis1;
-      // i don't know if the joint angle will be set to zero here to
-      if(physical_joint) physical_joint->setAxis(axis);
-    }
-
     void SimJoint::rotateAxis1(const Quaternion &rotate) {
       //sJoint.axis1 = QVRotate(rotate, sJoint.axis1);
       sJoint.axis1 = (rotate * sJoint.axis1);
@@ -170,18 +172,28 @@ namespace mars {
       if (physical_joint) physical_joint->setAxis(sJoint.axis1);
     }
 
+    const utils::Vector getAxis(unsigned char axis_index=0) const {
+      return axis_index == 0 ? axis1 : axis2;
+    }
 
     const Vector SimJoint::getAxis1() const {
       return axis1;
     }
 
-    void SimJoint::setAxis2(const Vector &axis) {
+      const Vector SimJoint::getAxis2() const {
+        return axis2;
+      }
+
+      void SimJoint::setAxis1(const Vector &axis) {
+        sJoint.axis1 = axis1 = axis;
+        axis1InNode1 = snode1->getRotation().inverse()*sJoint.axis1;
+        // i don't know if the joint angle will be set to zero here to
+        if(physical_joint) physical_joint->setAxis(axis);
+      }
+
+      void SimJoint::setAxis2(const Vector &axis) {
       sJoint.axis2 = axis;
       if (physical_joint) physical_joint->setAxis2(axis);
-    }
-
-    const Vector SimJoint::getAxis2() const {
-      return axis2;
     }
 
     void SimJoint::setId(unsigned long i) {
@@ -192,12 +204,16 @@ namespace mars {
       return sJoint.index;
     }
 
+    sReal SimJoint::getPosition(unsigned char axis_index=0) const {
+        return axis_index == 0 ? position1 : position2;
+      }
+
     sReal SimJoint::getActualAngle1() const {
-      return actualAngle1;
+      return position1;
     }
 
     sReal SimJoint::getActualAngle2() const {
-      return actualAngle2;
+      return position2;
     }
 
     void SimJoint::update(sReal calc_ms){
@@ -271,24 +287,45 @@ namespace mars {
       return tmp;
     }
 
-    void SimJoint::setInterface(JointInterface* physical_joint) {
+    void setPhysicalJoint(interfaces::JointInterface *physical_joint) {
       this->physical_joint = physical_joint;
     }
 
-    void SimJoint::setForceLimit(sReal force) {
-      physical_joint->setForceLimit(force);
+    void SimJoint::setInterface(JointInterface* physical_joint) {
+      setPhysicalJoint(physical_joint);
     }
 
-    void SimJoint::setForceLimit2(sReal force) {
-      physical_joint->setForceLimit2(force);
+    void setEffortLimit(interfaces::sReal effort, unsigned char axis_index=0) {
+      if (axis_index == 0) {
+        physical_joint->setForceLimit(effort);
+      }
+      else {
+        physical_joint->setForceLimit2(effort);
+      }
+    }
+
+    void SimJoint::setForceLimit(sReal force) { // deprecated
+      setEffortLimit(force, 0);
+    }
+
+    void SimJoint::setForceLimit2(sReal force) { // deprecated
+      setEffortLimit(force, 1);
+    }
+
+    void setSpeed(interfaces::sReal speed, unsigned char axis_index=0) {
+      if (axis_index == 0) {
+        physical_joint->setVelocity(velocity*invert);
+      } else {
+        physical_joint->setVelocity2(velocity*invert);
+      }
     }
 
     void SimJoint::setVelocity(sReal velocity) {
-      physical_joint->setVelocity(velocity*invert);
+      setSpeed(velocity, 0);
     }
 
     void SimJoint::setVelocity2(sReal velocity) {
-      physical_joint->setVelocity2(velocity*invert);
+      setSpeed(velocity, 1);
     }
 
     sReal SimJoint::getVelocity(void) const {
@@ -307,12 +344,20 @@ namespace mars {
       physical_joint->setTorque2(torque*invert);
     }
 
+    void attachMotor(unsigned char axis_index) {
+      physical_joint->setJointAsMotor(axis_index);
+    }
+
+    void detachMotor(unsigned char axis_index) {
+      physical_joint->unsetJointAsMotor(axis_index);
+    }
+
     void SimJoint::setJointAsMotor(int axis) {
-      physical_joint->setJointAsMotor(axis);
+      attachMotor(axis);
     }
 
     void SimJoint::unsetJointAsMotor(int axis) {
-      physical_joint->unsetJointAsMotor(axis);
+      detachMotor(axis);
     }
 
     void SimJoint::getCoreExchange(core_objects_exchange *obj) const {
@@ -380,16 +425,24 @@ namespace mars {
       return joint_load;
     }
 
-    unsigned long SimJoint::getNodeIndex1() const {
-      return sJoint.nodeIndex1;
+    interfaces::NodeId getNodeId(unsigned char node_index=0) const {
+      return node_index == 0 ? sJoint.nodeIndex1 : sJoint.nodeIndex2;
     }
 
-    unsigned long SimJoint::getNodeIndex2() const {
-      return sJoint.nodeIndex2;
+    unsigned long SimJoint::getNodeIndex1() const { // deprecated
+      return getNodeId(0);
     }
 
-    void SimJoint::changeStepSize(void) {
-      physical_joint->changeStepSize(sJoint);
+    unsigned long SimJoint::getNodeIndex2() const { // deprecated
+      return getNodeId(1);
+    }
+
+    void SimJoint::updateStepSize(void) {
+        physical_joint->changeStepSize(sJoint);
+      }
+
+    void SimJoint::changeStepSize(void) { // deprecated
+      updateStepSize();
     }
 
     void SimJoint::setSDParams(JointData *sJoint) {

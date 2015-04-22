@@ -173,8 +173,8 @@ namespace mars {
       const utils::Vector getForce2(void) const __attribute__ ((deprecated("use getForceVector")));
       const utils::Vector getTorque1(void) const __attribute__ ((deprecated("use getTorqueVector")));
       const utils::Vector getTorque2(void) const __attribute__ ((deprecated("use getTorqueVector")));
-      interfaces::sReal getActualAngle1() const __attribute__ ((deprecated("use getCurrentPosition")));
-      interfaces::sReal getActualAngle2() const __attribute__ ((deprecated("use getCurrentPosition")));
+      interfaces::sReal getActualAngle1() const __attribute__ ((deprecated("use getPosition")));
+      interfaces::sReal getActualAngle2() const __attribute__ ((deprecated("use getPosition")));
       SimNode* getAttachedNode1(void) const __attribute__ ((deprecated("use getAttachedNode")));
       SimNode* getAttachedNode2(void) const __attribute__ ((deprecated("use getgetAttachedNode")));
       void setAxis1(const utils::Vector &axis) __attribute__ ((deprecated("use setAxis")));
@@ -191,7 +191,7 @@ namespace mars {
       interfaces::JointInterface *physical_joint;
       SimNode *snode1, *snode2;
       interfaces::JointId id;
-      interfaces::sReal currentPosition1, currentPosition2;
+      interfaces::sReal position1, position2;
       interfaces::sReal speed1, speed2;
       interfaces::sReal lowStop1, lowStop2, highStop1, highStop2;
       utils::Vector anchor;
